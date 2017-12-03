@@ -1,0 +1,48 @@
+FlyDrone Notes
+
+Things To Do
+	rolling average out US sensor readings to cancel out noise
+	take average of dual accelerometers 
+Sensors
+	dual acceloremters
+	2x Ultrasonic (front and down facing)
+	FPV camera
+	RGB LED
+	communication input/output
+	4x motors
+	4x ESC
+
+Port Layout (NANO)
+
+left side
+D13
+3V3
+REF
+A0
+A1
+A2
+A3
+A4
+A5
+A6
+A7
+5V
+RST
+GND
+VIN
+
+right side
+D12
+D11
+D10
+D9
+D8
+D7
+D6
+D5
+D4
+D3
+GND
+RST
+RX0
+TX1
