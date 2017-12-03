@@ -1,0 +1,4 @@
+Drone	KEYWORD1
+roll	KEYWORD2
+pitch	KEYWORD2
+yaw	KEYWORD2

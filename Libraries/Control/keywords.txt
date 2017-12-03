@@ -1,0 +1,6 @@
+Control	KEYWORD1
+getOutput	KEYWORD2
+setReference	KEYWORD2
+setKp	KEYWORD2
+setKi	KEYWORD2
+setKd	KEYWORD2
