@@ -2,8 +2,6 @@
 #include <IMU.h>
 #include <Drone.h>
 #include <Control.h>
-//#include <math.h>
-
 
 Drone myDrone(1, 2, 3, 4);
 IMU imu;
