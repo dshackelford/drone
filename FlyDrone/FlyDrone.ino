@@ -90,13 +90,10 @@ void loop()
   if (digitalRead(motorSwitchPin))
   {
     motorsEngaged = true;
-    //goPID();
   }
   else
   {
     motorsEngaged = false;
-    escR.writeMicroseconds(0);
-    escL.writeMicroseconds(0);
   }
 
   //goUltraSonic();
@@ -116,7 +113,6 @@ void goIMU()
   Serial.print(imu.ypr[1]);
   Serial.print("\t");
   Serial.print(imu.ypr[2]);
-  //Serial.print("\n");
 }
 void goPID ()
 {
