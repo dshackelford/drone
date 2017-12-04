@@ -5,11 +5,13 @@
 
 Drone myDrone(1, 2, 3, 4);
 IMU imu;
-Control pidL(1, 0, 0, 2000, 500); //kp ki kd max min
-Control pidR(1, 0, 0, 2000, 500);
+Control pidL(5, 0, 0, 600, 300); //kp ki kd max min
+Control pidR(5, 0, 0, 600, 300);
+Servo escL;
+Servo escR;
 
 double ref = 0;
-double throttle = 1000;
+double throttle = 500;
 
 int rightLED = 4;
 int leftLED = 5;
@@ -17,9 +19,6 @@ int MPULED = 6;
 bool MPUEngaged = false;
 bool motorsEngaged = false;
 int motorSwitchPin = 9;
-
-int talkToMotorsPin = 8;
-int buttonState = 0;
 
 int BluePin = 10;
 int GreenPin = 11;
@@ -34,33 +33,35 @@ void setup()
 {
   Serial.begin(115200);
   Serial.println("Arduino Sketch Start!");
-  pinMode(talkToMotorsPin, INPUT);
 
   pinMode(RedPin, OUTPUT);
   pinMode(GreenPin, OUTPUT);
   pinMode(BluePin, OUTPUT);
 
-  pinMode(usTrigPin,OUTPUT);
-  pinMode(usEchoPin,INPUT);
-  /*
-    if (imu.initialSetup()) //waits for 15s for start up if successful on dmp initialization.
-    {
-      attachInterrupt(digitalPinToInterrupt(2), interruptFunc, RISING); //necessary for IMU to communicate.
-      imu.getYPR();
-      if (isnan(imu.ypr[0]))
-      {
-        Serial.print("Not a number");
+  pinMode(usTrigPin, OUTPUT);
+  pinMode(usEchoPin, INPUT);
 
-      }
+  escL.attach(5);
+  escR.attach(6);
 
-      MPUEngaged = true;
-      goWhite();
-    }
-    else
+  if (imu.initialSetup()) //waits for 15s for start up if successful on dmp initialization.
+  {
+    attachInterrupt(digitalPinToInterrupt(2), interruptFunc, RISING); //necessary for IMU to communicate.
+    imu.getYPR();
+    if (isnan(imu.ypr[0]))
     {
-      //failed to start MPU
+      Serial.print("Not a number");
+
     }
-  */
+
+    MPUEngaged = true;
+    goWhite();
+  }
+  else
+  {
+    //failed to start MPU
+  }
+
 
 }
 
@@ -70,28 +71,36 @@ void loop()
   {
     goGreen();
     goIMU();
+    goPID();
   }
   else if (MPUEngaged && !motorsEngaged)
   {
     goWhite();
     goIMU();
+    escR.writeMicroseconds(0);
+    escL.writeMicroseconds(0);
   }
   else
   {
+    escR.writeMicroseconds(0);
+    escL.writeMicroseconds(0);
     goRed;
   }
 
   if (digitalRead(motorSwitchPin))
   {
     motorsEngaged = true;
-    goPID();
+    //goPID();
   }
   else
   {
     motorsEngaged = false;
+    escR.writeMicroseconds(0);
+    escL.writeMicroseconds(0);
   }
 
-  goUltraSonic();
+  //goUltraSonic();
+  Serial.print("\n");
 }
 
 void interruptFunc()
@@ -107,19 +116,24 @@ void goIMU()
   Serial.print(imu.ypr[1]);
   Serial.print("\t");
   Serial.print(imu.ypr[2]);
-  Serial.print("\n");
+  //Serial.print("\n");
 }
 void goPID ()
 {
 
-  double outL = pidL.getOutput(imu.ypr[2], 1000, ref); //current, throttle, ref
-  double outR = pidR.getOutput(-imu.ypr[2], 1000, -ref);
+  double outL = pidL.getOutput(imu.ypr[2], throttle, ref); //current, throttle, ref
+  double outR = pidR.getOutput(-imu.ypr[2], throttle, -ref);
 
   Serial.print("\t");
   Serial.print(outL);
   Serial.print("\t");
   Serial.print(outR);
-  Serial.print("\n");
+  //Serial.print("\n");
+
+  escL.writeMicroseconds(outL);
+  escR.writeMicroseconds(outR);
+
+
 }
 void goUltraSonic()
 {
